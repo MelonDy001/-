@@ -1,7 +1,6 @@
-from stringprep import in_table_a1
-import pygame  # 载入pygame模块
 import random  # 载入random模块
 
+import pygame  # 载入pygame模块
 
 pygame.init()  # 初始化 pygame模块，确保pygame模块完整可用
 
@@ -12,13 +11,13 @@ score = 0  # 初始成绩
 window = pygame.display.set_mode((length, width))  # 设置窗口的长度与宽度
 pygame.display.set_caption('贪吃蛇小游戏')  # 设置窗口标题
 
-purple = (128,0,128)  # 紫色
+yellow = (255, 255, 0)  # 黄色
 black = (0, 0, 0)  # 黑色
 Red = (255, 0, 0)  # 红色
 
 # 给出蛇的坐标
 head = [200, 200]  # 蛇头的坐标
-snake = [[200, 200], [190, 200], [180, 200],[170,200]]  # 蛇身体的三个矩形的坐标
+snake = [[200, 200], [190, 200], [180, 200], [170, 200]]  # 蛇身体的三个矩形的坐标
 
 # 随机给出食物的坐标
 food_rd = [random.randrange(1, 60) * 10, random.randrange(1, 60) * 10]
@@ -41,11 +40,10 @@ def start(window):
                 else:
                     return 0  # 结束初始界面，开始玩蛇
 
+
 # 设置游戏结束界面
 def over(window):
-
     startimage = pygame.image.load('e.jpg')
-
     window.blit(startimage, (150, 130))
     pygame.display.update()
     while True:
@@ -57,6 +55,8 @@ def over(window):
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     exit()
+                else:
+                    return 0  # 刷新
 
 
 # 贪吃蛇死亡的两种情况
@@ -86,7 +86,7 @@ def movesnake(direction):
         if head != food_rd:  # 如果没有吃到食物
             snake.pop(-1)  # 删去最后一个元素
         else:  # 头部坐标等于食物坐标时即吃到食物，不删除末尾元素即完成增长
-            score = score + 1
+            score = score + 10
             food_rd = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]  # 食物被吃后随机产生新食物
     elif direction == 2:
         head[1] = head[1] + 10
@@ -94,7 +94,7 @@ def movesnake(direction):
         if head != food_rd:
             snake.pop(-1)
         else:
-            score = score + 1
+            score = score + 10
             food_rd = [random.randrange(1, 60) * 10, random.randrange(1, 60) * 10]
     elif direction == 3:
         head[0] = head[0] - 10
@@ -102,7 +102,7 @@ def movesnake(direction):
         if head != food_rd:
             snake.pop(-1)
         else:
-            score = score + 1
+            score = score + 10
             food_rd = [random.randrange(1, 60) * 10, random.randrange(1, 60) * 10]
     elif direction == 4:
         head[0] = head[0] + 10
@@ -110,7 +110,7 @@ def movesnake(direction):
         if head != food_rd:
             snake.pop(-1)
         else:
-            score = score + 1
+            score = score + 10
             food_rd = [random.randrange(1, 60) * 10, random.randrange(1, 60) * 10]
 
     # 蛇在移动中该死的时候还是要死的
@@ -142,15 +142,19 @@ while True:
 
     movesnake(direction)  # 根据按键方向移动蛇
     window.fill(black)  # 给窗口绘制黑色的画布
-    pygame.draw.rect(window, purple, pygame.Rect(food_rd[0], food_rd[1], 10, 10))  # 画出食物
+    pygame.draw.rect(window, yellow, pygame.Rect(food_rd[0], food_rd[1], 10, 10))  # 画出食物
     # 画出小蓝蛇
     for i in snake:
-        pygame.draw.rect(window, purple, pygame.Rect(i[0], i[1], 10, 10))
-                    # 显示成绩
+        pygame.draw.rect(window, yellow, pygame.Rect(i[0], i[1], 10, 10))
+    # 显示成绩
     font = pygame.font.Font('宋体粗体.ttf', 25)
     score_show = font.render('得分: %s' % score, 1, Red)  # 格式化输出得分信息
     window.blit(score_show, (500, 20))
+    font1 = pygame.font.Font('宋体粗体.ttf', 25)
+    speed_show = font1.render('帧速率: %s' % speed, 1, Red)  # 格式化输出速度信息
+    window.blit(speed_show, (100, 20))
 
     pygame.display.update()  # 刷新界面
-    text = font.render("C语言中文网",True,(255,0,0),(0,0,0))
-    speed.tick(10)  # FPS(数值越大蛇移动的速度越快)
+    speed.tick(10)  # 蛇的初始速度
+    pygame.display.update()
+    speed.tick(score + 10)  # FPS(数值越大蛇移动的速度越快)
